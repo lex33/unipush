@@ -75,7 +75,7 @@ class Unipush
         ssl = OpenSSL::SSL::SSLSocket.new(socket, context)
         ssl.sync = true
         ssl.connect
-        messages.each do |k, m|
+        messages.each do |m, k|
           mes = prepare_ios_message(m[0], m[1])
           if mes
             ssl.write(m[1])
