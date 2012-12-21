@@ -42,7 +42,7 @@ class Unipush
 
       unless message[:add].nil?
         add_fields = []
-        message[:add].each do |k, m|
+        message[:add].each do |m, k|
           add_fields.push('"'+k+'":"'+m.gsub(/['"\\\x0]/,'\\\\\0')+'"')
         end
         add_str = ","+add_fields.join(",")
