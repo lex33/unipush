@@ -42,12 +42,12 @@ class Unipush
 
       unless message[:add].nil?
         add_fields = []
-        message[:add].each do |m, k|
-          add_fields.push('"'+k+'":"'+m.gsub(/['"\\\x0]/,'\\\\\0')+'"')
+        message[:add].each do |k, m|
+          add_fields.push('"'+k.to_s+'":"'+m.gsub(/['"\\\x0]/,'\\\\\0')+'"')
         end
         add_str = ","+add_fields.join(",")
       end
-      json = '{"aps":{"alert":"'+message.gsub(/['"\\\x0]/,'\\\\\0')+'","badge":"'+badge+'","sound":"'+sound+'"}'+add_str+'}'
+      json = '{"aps":{"alert":"'+message[:text].gsub(/['"\\\x0]/,'\\\\\0')+'","badge":"'+badge+'","sound":"'+sound+'"}'+add_str+'}'
       token = [token].pack('H*')
     end
 
@@ -75,10 +75,10 @@ class Unipush
         ssl = OpenSSL::SSL::SSLSocket.new(socket, context)
         ssl.sync = true
         ssl.connect
-        messages.each do |m, k|
+        messages.each_with_index do |m, k|
           mes = prepare_ios_message(m[0], m[1])
           if mes
-            ssl.write(m[1])
+            ssl.write(mes)
             if ssl.pending >0 && m[1][:track]
               tmp = ssl.readline
               reply = tmp.unpack("CCN")
