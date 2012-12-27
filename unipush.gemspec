@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'unipush'
-  s.version     = '0.1.3'
-  s.date        = '2012-12-21'
+  s.version     = '0.1.4'
+  s.date        = '2012-12-27'
   s.summary     = "Unipush"
   s.description = "A simple push notification sender for iOS and Android"
   s.authors     = ["Alexey Kirov"]

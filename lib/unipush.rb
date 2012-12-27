@@ -104,6 +104,45 @@ class Unipush
     end
   end
 
+  def get_unregistered_tokens
+    cert_path = @ios_cert_path
+    if FileTest.exist?(cert_path)
+      begin
+        certificate = File.read(cert_path)
+        context = OpenSSL::SSL::SSLContext.new
+        context.key = OpenSSL::PKey::RSA.new(certificate)
+        context.cert = OpenSSL::X509::Certificate.new(certificate)
+        # получим удаленные токены
+        sock = TCPSocket.new("feedback.push.apple.com", 2196)
+        ssl = OpenSSL::SSL::SSLSocket.new(sock,context)
+        ssl.connect
+        apns_feedback = []
+        while line = ssl.read(38)
+          line.strip!
+          f = line.unpack("NnH*")
+          apns_feedback << [Time.at(f[0]), f[2]]
+        end
+        ssl.close
+        sock.close
+        # и вернем их для удаления
+        ret = []
+        unless apns_feedback.empty?
+          apns_feedback.each do |ff|
+            ret.push(ff[1])
+          end
+        end
+        ret
+      rescue
+        @last_error.push("Could not get tokens. Exception: #{$!.inspect}")
+        false
+      end
+    else
+      @last_error.push("Certificate file does not exist")
+      false
+    end
+  end
+
+
   def self.send_android_messages(app_code, messages)
     # Данные для доступа к точке отправки
     email = 'finansmag.app@gmail.com'
