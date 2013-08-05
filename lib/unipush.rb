@@ -1,5 +1,5 @@
 class Unipush
-  attr_accessor :ios_cert_path
+  attr_accessor :ios_cert_path # пусть к файлу сертификата
 
 
   def initialize(mode='production')
